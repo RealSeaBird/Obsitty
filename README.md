@@ -12,4 +12,3 @@ No this project dosen't borrow any code from obsidian nor am I personally relate
 The only way this project is related to obsidian is the name and functionality
 
 # WARNING THIS PROJECT IS VERY MUCH A WORK in PROGRESS!
-This is the github version so only stable releases upstream is on Forgejo
