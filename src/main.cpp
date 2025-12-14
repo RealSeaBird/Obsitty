@@ -2,7 +2,7 @@
 #include <ftxui/screen/screen.hpp>
 #include <iostream>
 #include <ftxui/component/screen_interactive.hpp>
-#include <ftxui/component/component.hpp> 
+#include <ftxui/component/component.hpp>
 #include <string>
 #include <vector>
 #include <fstream>
@@ -13,13 +13,13 @@ using namespace std;
 
 std::vector<std::string> getMarkdownFiles() {
     std::vector<std::string> files;
-    
+
     // Get home directory
     const char* home = std::getenv("HOME");
     if (!home) return files;
-    
+
     std::string docs_path = std::string(home) + "/Documents";
-    
+
     // Iterate through directory
     for (const auto& entry : std::filesystem::directory_iterator(docs_path)) {
         if (entry.is_regular_file()) {
@@ -30,7 +30,7 @@ std::vector<std::string> getMarkdownFiles() {
             }
         }
     }
-    
+
     return files;
 }
 
@@ -45,7 +45,7 @@ vector<std::string> readFileLines(const std::string& path) {
     vector<std::string> lines;
     ifstream file(path);
 
-    
+
 
 
 
@@ -111,8 +111,21 @@ int main(){
 
     };
 
-    int entries_selected = 0;
 
+    std::vector<std::string> entries_2 = {
+
+        "Modes:Menu",
+        "Editor view",
+        "Graph view",
+        "Settings",
+
+
+
+    };
+
+
+    int entries_selected = 0;
+    int entries_selected_2 = 0;
 
 
     int selected = 0;
@@ -120,12 +133,12 @@ int main(){
     MenuOption option;
     std::string content_1 = "";
 
-    
+
 option.on_change = [&]() {
     std::string selected_file = markdown_files[selected];
     const char* home = std::getenv("HOME");
     std::string filepath = std::string(home) + "/Documents/" + selected_file;
-    
+
     auto lines = readFileLines(filepath);
     content_1 = "";
     for (const auto& line : lines) {
@@ -135,7 +148,7 @@ option.on_change = [&]() {
 
 
 
-    
+
     auto menu = Menu(getMarkdownFiles(), &selected, option);
 
     const char* home = std::getenv("HOME");
@@ -156,19 +169,25 @@ option.on_change = [&]() {
     auto textarea_1 = Input(&content_1);
     auto screen = ScreenInteractive::Fullscreen();
 
-    
+
 
 
 
     auto dropdown = Dropdown(&entries, &entries_selected);
-    
+    auto dropdown2 = Dropdown(&entries_2, &entries_selected_2);
+
+
     // Store previous selection to detect changes
     int previous_selection = -1;
-    
+    int previous_selection_2 = -1;
+
     auto container = Container::Vertical({
-        dropdown,
+        Container::Horizontal({ Container::Vertical({ dropdown, dropdown2 }) }),
+
         Container::Horizontal({ menu, textarea_1 })
     });
+
+
     auto renderer = Renderer(container, [&] {
         // Handle dropdown selection changes
         if (entries_selected != previous_selection) {
@@ -193,8 +212,45 @@ option.on_change = [&]() {
             previous_selection = entries_selected;
         }
 
+        if (entries_selected_2 != previous_selection_2)  {
+
+            switch (entries_selected_2) {
+
+                case 1:
+                    //Nothing needed here!
+                    break;
+
+                case 2:
+                    //Todo (◕‿◕✿)
+                    break;
+
+                case 3:
+                    //Will be made next!
+                    break;
+
+                case 4:
+                    //AGAIN Todo
+                    break;
+
+
+
+
+
+
+            }
+            previous_selection_2 = entries_selected_2;
+
+
+
+
+        }
+
+
+
+
         auto top_bar = hbox({
             dropdown->Render(),
+            dropdown2->Render(),
             separator(),
             filler(),
             separator(),
