@@ -10,6 +10,7 @@
 
 
 using namespace std;
+using namespace ftxui;
 
 std::vector<std::string> getMarkdownFiles() {
     std::vector<std::string> files;
@@ -90,7 +91,7 @@ void saveFile(const std::string& filepath, const std::string& content) {
 
 
 
-using namespace ftxui;
+
 
 
 
@@ -258,11 +259,7 @@ option.on_change = [&]() {
         });
 
 
-        auto file_manager = vbox({
-            text("tEST"),
-            text("Files and shit"),
-            filler(),
-        }) | border | flex;
+
 
         auto left = menu->Render() | border | flex;
         auto right = textarea_1->Render() | border | flex;
