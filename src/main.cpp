@@ -8,7 +8,9 @@
 #include <fstream>
 #include <filesystem>
 #include <cstdlib>
-
+#include <random>
+#include <ctime>
+#include <stdbool.h>
 
 using namespace std;
 using namespace ftxui;
@@ -35,6 +37,19 @@ std::vector<std::string> getMarkdownFiles() {
 
     return files;
 }
+
+
+
+int random_number(){
+    srand(time(0));
+    int rand_num = rand() % 100 + 1;
+    return rand_num;
+}
+
+
+
+
+
 
 
 
@@ -246,16 +261,33 @@ option.on_change = [&]() {
                     // Get canvas dimensions
                     int width = c.width();
                     int height = c.height();
-                    
+
                     // Calculate center position
                     int center_x = width / 2;
                     int center_y = height / 2;
-                    
+                    int random_position_x;
+                    int random_position_y;
+
+                    bool random_active = false;
+
+                    if (random_active = false)
+                    {
+                        int random_position_x = random_number();
+                        int random_position_y = random_number();
+                        random_active = true;
+
+
+
+
+                    }
+
+
+
                     // Draw a dot in the middle
                     c.DrawPointCircleFilled(center_x, center_y, 3);
-                    
+
                     // Draw "text" underneath the dot
-                    c.DrawText(center_x - 2, center_y + 5, "text");
+                    c.DrawText(random_position_x - 2, random_position_y + 5, "text");
                 }) | border | flex;
                 break;
             }
