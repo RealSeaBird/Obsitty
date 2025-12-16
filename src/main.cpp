@@ -7,6 +7,7 @@
 #include <vector>
 #include <fstream>
 #include <filesystem>
+#include <cstdlib>
 
 
 using namespace std;
@@ -115,7 +116,6 @@ int main(){
 
     std::vector<std::string> entries_2 = {
 
-        "Modes:Menu",
         "Editor view",
         "Graph view",
         "Settings",
@@ -170,7 +170,7 @@ option.on_change = [&]() {
     auto textarea_1 = Input(&content_1);
     auto screen = ScreenInteractive::Fullscreen();
 
-
+    int cols = 5; // Define number of columns for layout
 
 
 
@@ -213,38 +213,7 @@ option.on_change = [&]() {
             previous_selection = entries_selected;
         }
 
-        if (entries_selected_2 != previous_selection_2)  {
 
-            switch (entries_selected_2) {
-
-                case 1:
-                    //Nothing needed here!
-                    break;
-
-                case 2:
-                    //Todo (◕‿◕✿)
-                    break;
-
-                case 3:
-                    //Will be made next!
-                    break;
-
-                case 4:
-                    //AGAIN Todo
-                    break;
-
-
-
-
-
-
-            }
-            previous_selection_2 = entries_selected_2;
-
-
-
-
-        }
 
 
 
@@ -258,11 +227,49 @@ option.on_change = [&]() {
             text("Obsitty") | bold
         });
 
+        auto left = filler() | border | flex;
+        auto right = filler() | border | flex;
+
+        if (entries_selected_2 != previous_selection_2)  {
+            previous_selection_2 = entries_selected_2;
+        }
+
+        switch (entries_selected_2) {
+            case 0:
+                left = menu->Render() | border | flex;
+                right = textarea_1->Render() | border | flex;
+                break;
+
+            case 1: {
+                left = filler() | border | flex;
+                right = canvas([&](Canvas& c) {
+                    // Get canvas dimensions
+                    int width = c.width();
+                    int height = c.height();
+                    
+                    // Calculate center position
+                    int center_x = width / 2;
+                    int center_y = height / 2;
+                    
+                    // Draw a dot in the middle
+                    c.DrawPointCircleFilled(center_x, center_y, 3);
+                    
+                    // Draw "text" underneath the dot
+                    c.DrawText(center_x - 2, center_y + 5, "text");
+                }) | border | flex;
+                break;
+            }
+
+            case 2:
+                //Settings will be made next!
+                left = filler() | border | flex;
+                right = filler() | border | flex;
+                break;
+        }
 
 
 
-        auto left = menu->Render() | border | flex;
-        auto right = textarea_1->Render() | border | flex;
+
         return vbox({
             top_bar,
             hbox({ left, right }) | flex
