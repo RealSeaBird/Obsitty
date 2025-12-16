@@ -115,6 +115,20 @@ int main(){
 
 
 
+    int random_position_x;
+    int random_position_y;
+    int random_position_persistant_x;
+    int random_position_persistant_y;
+    bool random_active = false;
+
+
+
+
+
+
+
+
+
 
 
     std::vector<std::string> entries = {
@@ -261,19 +275,17 @@ option.on_change = [&]() {
                     // Get canvas dimensions
                     int width = c.width();
                     int height = c.height();
-
-                    // Calculate center position
                     int center_x = width / 2;
                     int center_y = height / 2;
-                    int random_position_x;
-                    int random_position_y;
 
-                    bool random_active = false;
+                    // Calculate center position
 
-                    if (random_active = false)
+                    if (random_active == false)
                     {
-                        int random_position_x = random_number();
-                        int random_position_y = random_number();
+                        random_position_x = random_number() % width;
+                        random_position_y = random_number() % height;
+                        random_position_persistant_x = random_position_x;
+                        random_position_persistant_y = random_position_y;
                         random_active = true;
 
 
@@ -287,7 +299,7 @@ option.on_change = [&]() {
                     c.DrawPointCircleFilled(center_x, center_y, 3);
 
                     // Draw "text" underneath the dot
-                    c.DrawText(random_position_x - 2, random_position_y + 5, "text");
+                    c.DrawText(random_position_persistant_x - 2, random_position_persistant_y + 5, "text");
                 }) | border | flex;
                 break;
             }
