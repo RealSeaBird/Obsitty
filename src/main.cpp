@@ -11,6 +11,7 @@
 #include <random>
 #include <ctime>
 #include <stdbool.h>
+#include <algorithm>
 
 using namespace std;
 using namespace ftxui;
@@ -41,7 +42,6 @@ std::vector<std::string> getMarkdownFiles() {
 
 
 int random_number(){
-    srand(time(0));
     int rand_num = rand() % 100 + 1;
     return rand_num;
 }
@@ -113,13 +113,18 @@ void saveFile(const std::string& filepath, const std::string& content) {
 
 int main(){
 
-
+    // Initialize random seed once
+    srand(time(0));
 
     int random_position_x;
     int random_position_y;
     int random_position_persistant_x;
     int random_position_persistant_y;
     bool random_active = false;
+    
+    // Storage for multiple markdown files' positions
+    std::vector<std::pair<int, int>> markdown_positions;
+    bool positions_initialized = false;
 
 
 
@@ -280,26 +285,44 @@ option.on_change = [&]() {
 
                     // Calculate center position
 
-                    if (random_active == false)
-                    {
-                        random_position_x = random_number() % width;
-                        random_position_y = random_number() % height;
-                        random_position_persistant_x = random_position_x;
-                        random_position_persistant_y = random_position_y;
-                        random_active = true;
+                    std::vector<std::string> markdownFiles = getMarkdownFiles();
 
-
-
-
+                    // Initialize positions only once
+                    if (!positions_initialized) {
+                        markdown_positions.clear();
+                        
+                        // Grid-based positioning to prevent overlap
+                        int cols = 3;
+                        int rows = (markdownFiles.size() + cols - 1) / cols;  // Ceiling division
+                        int cell_width = width / cols;
+                        int cell_height = height / rows;
+                        
+                        for (size_t i = 0; i < markdownFiles.size(); i++) {
+                            int grid_x = i % cols;
+                            int grid_y = i / cols;
+                            
+                            // Add some randomness within each grid cell
+                            int x = grid_x * cell_width + (rand() % (cell_width - 20)) + 10;
+                            int y = grid_y * cell_height + (rand() % (cell_height - 10)) + 5;
+                            
+                            // Ensure we stay within canvas bounds
+                            x = std::min(x, width - 20);
+                            y = std::min(y, height - 5);
+                            
+                            markdown_positions.push_back({x, y});
+                        }
+                        positions_initialized = true;
                     }
-
-
 
                     // Draw a dot in the middle
                     c.DrawPointCircleFilled(center_x, center_y, 3);
 
-                    // Draw "text" underneath the dot
-                    c.DrawText(random_position_persistant_x - 2, random_position_persistant_y + 5, "text");
+                    // Draw each markdown file as text at its persistent random position
+                    for (size_t i = 0; i < markdownFiles.size() && i < markdown_positions.size(); i++) {
+                        // Draw a small dot next to each filename for visual debugging
+                        c.DrawPointCircleFilled(markdown_positions[i].first - 3, markdown_positions[i].second, 1);
+                        c.DrawText(markdown_positions[i].first, markdown_positions[i].second, markdownFiles[i]);
+                    }
                 }) | border | flex;
                 break;
             }
