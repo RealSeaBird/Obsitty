@@ -12,4 +12,5 @@ No this project dosen't borrow any code from obsidian nor am I personally relate
 The only way this project is related to obsidian is the name and functionality
 
 # WARNING THIS PROJECT IS VERY MUCH A WORK in PROGRESS!
-This is branch is for pushing random untested changes I do not reccomend using it but im not gonna stop you
+This branch contains lightly tested changes from upstream
+use at your own risk
