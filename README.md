@@ -4,7 +4,7 @@
 
 ### Why use Obsitty?
 Obsitty is built from the ground up to be as efficient and elegant as possible
-We decided against heavy GUI frameworks instead opting for the FTXUI Terminal User Interface instead
+We decided against heavy GUI frameworks instead opting for the FTXUI Text User Interface instead
 
 
 ### Is this project in any way related to Obsidian?
