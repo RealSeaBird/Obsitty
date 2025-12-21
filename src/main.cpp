@@ -49,7 +49,21 @@ int random_number(){
 
 
 
+vector<string> menu_entries = {
+    "Themes",
+    "Folder location"
 
+
+
+
+};
+
+
+
+int settings_selected = 0;
+
+
+auto menu_settings = Radiobox(&menu_entries, &settings_selected);
 
 
 
@@ -121,7 +135,7 @@ int main(){
     int random_position_persistant_x;
     int random_position_persistant_y;
     bool random_active = false;
-    
+
     // Storage for multiple markdown files' positions
     std::vector<std::pair<int, int>> markdown_positions;
     bool positions_initialized = false;
@@ -216,10 +230,11 @@ option.on_change = [&]() {
     int previous_selection = -1;
     int previous_selection_2 = -1;
 
-    auto container = Container::Vertical({
-        Container::Horizontal({ Container::Vertical({ dropdown, dropdown2 }) }),
+    auto container = Container::Vertical(Components{
+        Container::Horizontal(Components{ Container::Vertical(Components{ dropdown, dropdown2 }) }),
 
-        Container::Horizontal({ menu, textarea_1 })
+        Container::Horizontal(Components{ menu, textarea_1 }),
+        Container::Horizontal(Components{ menu_settings })
     });
 
 
@@ -290,25 +305,25 @@ option.on_change = [&]() {
                     // Initialize positions only once
                     if (!positions_initialized) {
                         markdown_positions.clear();
-                        
+
                         // Grid-based positioning to prevent overlap
                         int cols = 3;
                         int rows = (markdownFiles.size() + cols - 1) / cols;  // Ceiling division
                         int cell_width = width / cols;
                         int cell_height = height / rows;
-                        
+
                         for (size_t i = 0; i < markdownFiles.size(); i++) {
                             int grid_x = i % cols;
                             int grid_y = i / cols;
-                            
+
                             // Add some randomness within each grid cell
                             int x = grid_x * cell_width + (rand() % (cell_width - 20)) + 10;
                             int y = grid_y * cell_height + (rand() % (cell_height - 10)) + 5;
-                            
+
                             // Ensure we stay within canvas bounds
                             x = std::min(x, width - 20);
                             y = std::min(y, height - 5);
-                            
+
                             markdown_positions.push_back({x, y});
                         }
                         positions_initialized = true;
@@ -329,7 +344,10 @@ option.on_change = [&]() {
 
             case 2:
                 //Settings will be made next!
-                left = filler() | border | flex;
+
+
+
+                left = menu_settings->Render() | border | flex;
                 right = filler() | border | flex;
                 break;
         }
