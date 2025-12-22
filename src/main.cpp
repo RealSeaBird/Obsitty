@@ -20,6 +20,14 @@ const char* home = std::getenv("HOME");
 
 
 
+// color definition
+
+auto dark = Color::Black;
+auto light = Color::White;
+
+bool isdark = false;
+bool islight = true;
+
 
 
 const string config_path = std::string(home) + "/.config/obsitty/obsitty.conf";
@@ -32,8 +40,8 @@ int random_number(){
 }
 
 vector<string> settings_themes_options = {
-  "Dark",
-  "Light"
+  "Light",
+  "Dark"
 
 
 };
@@ -53,6 +61,7 @@ std::string settings_path_placeholder = std::string(home) + "/Documents";
 string file_location = "";
 int settings_themes_selected = 0;
 int settings_selected = 0;
+string theme_selcted = "";
 
 
 auto menu_settings = Radiobox(&menu_entries, &settings_selected);
@@ -91,11 +100,54 @@ vector<std::string> readFileLines(const std::string& path) {
     return lines;
 }
 
+// Forward declaration
+void saveFile(const std::string& filepath, const std::string& content);
+
 // Load config file on startup
 void loadConfig() {
     auto lines = readFileLines(config_path);
     if (!lines.empty()) {
         file_location = lines[0];
+    }
+}
+
+// Load theme config
+void loadTheme() {
+    auto lines = readFileLines(theme_path);
+    if (!lines.empty()) {
+        try {
+            settings_themes_selected = std::stoi(lines[0]);
+            // Ensure it's within valid range
+            if (settings_themes_selected < 0 || settings_themes_selected >= settings_themes_options.size()) {
+                settings_themes_selected = 0;
+            }
+        } catch (const std::exception& e) {
+            settings_themes_selected = 0; // Default to first option if conversion fails
+        }
+    }
+}
+
+// Save theme config
+void saveTheme() {
+    std::string theme_value = std::to_string(settings_themes_selected);
+    saveFile(theme_path, theme_value);
+}
+
+// Apply theme colors based on current selection
+void applyTheme() {
+    switch (settings_themes_selected) {
+        case 0: // Light theme
+            isdark = false;
+            islight = true;
+            break;
+        case 1: // Dark theme
+            isdark = true;
+            islight = false;
+            break;
+        default:
+            isdark = false;
+            islight = true;
+            break;
     }
 }
 
@@ -131,7 +183,7 @@ void saveFile(const std::string& filepath, const std::string& content) {
     }
 
     file.close();
-    
+
     // Log success
     std::ofstream log("/tmp/obsitty_debug.log", std::ios::app);
     log << "File saved successfully: " << filepath << std::endl;
@@ -191,6 +243,8 @@ std::vector<std::string> getMarkdownFiles() {
 int main(){
     // Load configuration on startup
     loadConfig();
+    loadTheme();
+    applyTheme(); // Apply the loaded theme
 
     // Initialize random seed once
     srand(time(0));
@@ -460,6 +514,7 @@ option.on_change = [&]() {
                 case 2:
                     //stuff
                     // save the theme options
+                    saveTheme();
                     break;
 
 
@@ -475,6 +530,28 @@ option.on_change = [&]() {
                 switch (settings_selected) {
                     case 0:
                         right = menu_settings_themes->Render() | border | flex;
+
+                        switch (settings_themes_selected) {
+                            case 0:
+                            // Light theme selected
+                            applyTheme();
+                            break;
+
+                            case 1:
+                            // Dark theme selected
+                            applyTheme();
+                            break;
+
+                            default:
+                            applyTheme();
+                            break;
+                        }
+
+
+
+
+
+
                         // stuff
                     break;
 
@@ -496,10 +573,17 @@ option.on_change = [&]() {
 
 
 
-        return vbox({
-            top_bar,
-            hbox({ left, right }) | flex
-        });
+        if (isdark == true) {
+            return vbox({
+                top_bar | color(dark),
+                hbox({ left, right }) | flex | color(dark)
+            });
+        } else {
+            return vbox({
+                top_bar,
+                hbox({ left, right }) | flex
+            });
+        }
     });
 
     screen.Loop(renderer);
