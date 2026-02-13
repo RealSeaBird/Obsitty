@@ -1,10 +1,10 @@
 {
   description = "Nix flake for the Obsitty tty notes app";
-  
+
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
   };
-  
+
   outputs = { self, nixpkgs }:
   let
 
@@ -17,7 +17,8 @@
         packages = with pkgs; [
           gcc
           ftxui
-          cmake
+          meson
+          pkg-config
 
 
         ];
